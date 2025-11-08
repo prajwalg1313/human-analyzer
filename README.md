@@ -1,4 +1,4 @@
-# Personality Analyzer (Simple 50-ish Questions)
+# Human Personality Analyzer (Simple 50-ish Questions)
 
 This is a small Python project that asks around 40–50 short personality questions
 and gives you a basic "psyche report" based on your answers.
