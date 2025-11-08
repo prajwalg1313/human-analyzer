@@ -44,4 +44,4 @@ I built it to practice Python loops, functions, input handling, and basic logic.
 
 ## 🧠 Run it using:
 1. `git clone https://github.com/prajwalg1313/human-analyzer.git && cd human-analyzer`  
-2. `python human_analyzer.py`
+2. `python3 human_analyzer.py`
