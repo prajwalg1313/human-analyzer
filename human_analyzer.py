@@ -150,7 +150,6 @@ def analyze(scores):
 
 
 def main():
-    #the actual number is 43 questions due to the uneven lists, but we leave the old title for flavor.
     print("Welcome to the Personality Analyzer (Simple 50-ish questions)")
     print("This is just for learning purposes, not a clinical test. Enjoy!\n")
 
@@ -163,7 +162,6 @@ def main():
     scores = {}
     total_questions = len(questions)
 
-    #main loop for asking questions
     for i, (q, trait) in enumerate(questions, start=1):
         print(f"\nQuestion {i}/{total_questions} - Trait: {trait}")
         ans = ask(q)
@@ -171,14 +169,13 @@ def main():
 
     result = analyze(scores)
 
-    # --- REPORT OUTPUT ---
     print("\n\n#####################################")
     print("####### FINAL PSYCHE REPORT #########")
     print("#####################################")
     
     print("\nRaw Trait Percentages (Higher is stronger):")
     for t, v in result["results"].items():
-        print(f"  > {t:<15}: {v}%") # Use f-string formatting for neatness
+        print(f"  > {t:<15}: {v}%")
 
     print("\nDerived Traits:")
     print(f"  > Emotional Stability: {result['emotional_stability']}%")
@@ -190,16 +187,40 @@ def main():
     for line in result["summary"]:
         print(" -", line)
 
-    #optional save (Simple file write without heavy error handling)
+    # === NEW SECTION: Human Threat Level ===
+    empathy = result["results"]["Empathy"]
+    morality = result["results"]["Morality"]
+    impulsiveness = result["results"]["Impulsiveness"]
+    risk = result["results"]["RiskTaking"]
+    self_control = result["self_control"]
+
+    # Threat logic: high impulsiveness + high risk + low empathy/morality + low self-control
+    threat_score = (risk * 0.3) + (impulsiveness * 0.3) + ((100 - empathy) * 0.2) + ((100 - morality) * 0.1) + ((100 - self_control) * 0.1)
+    threat_score = round(threat_score, 1)
+
+    if threat_score > 80:
+        threat_label = "⚠️ Very High (Potentially Dangerous)"
+    elif threat_score > 60:
+        threat_label = "High"
+    elif threat_score > 40:
+        threat_label = "Moderate"
+    else:
+        threat_label = "Low"
+
+    print("\n--- HUMAN THREAT LEVEL ---")
+    print(f"  > Threat Score: {threat_score} / 100")
+    print(f"  > Threat Level: {threat_label}")
+    print("----------------------------")
+
     save = input("\nSave this profile to a text file? (y/n): ").strip().lower()
     if save in ["y", "yes"]:
         filename = f"profile_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-        # We'll use simple file writing here, skipping the try/except for a "quick code" feel
         with open(filename, "w", encoding="utf-8") as f:
             f.write("PERSONALITY REPORT\n\n")
             f.write("RAW TRAITS:\n")
             for t, v in result["results"].items():
                 f.write(f"{t}: {v}%\n")
+            f.write(f"\nHUMAN THREAT LEVEL: {threat_label} ({threat_score}/100)\n")
             f.write("\nSUMMARY:\n")
             for line in result["summary"]:
                 f.write(" - " + line + "\n")
